@@ -1,0 +1,68 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 8116
+      POSTGRES_DB: db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    build:
+      context: ./Our-Server-Side
+      #target: development  # Optional: if you want to use multi-stage builds with dev target
+    ports:
+      - "8080:8080"
+    environment:
+      # Same env vars, you can override or add dev specific if needed
+      PORT: 8080
+      PG_HOST: db
+      PG_PORT: 5432
+      PG_USER: postgres
+      PG_PASSWORD: 8116
+      PG_DATABASE: db
+      DATABASE_URL: postgresql://postgres:8116@db:5432/db?schema=public
+    # volumes:
+    #   - ./Our-Server-Side:/app   # Mount your backend source code for live changes
+    #   - /app/node_modules       # Prevent overwriting node_modules with host's empty folder
+    command: npm run dev   # Run backend with nodemon for hot reload
+    develop:
+      watch:
+        - action: sync
+          path: ./Our-Server-Side
+          target: /app
+          ignore:
+            - node_modules/
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./Our-Client-Side
+      #target: development  # Optional if you have multi-stage build with dev target
+    ports:
+      - "3000:3000"            # React dev server default port
+    environment:
+      REACT_APP_SERVER_API_URL: http://localhost:8080  # backend url accessible from host
+    # volumes:
+    #   - ./Our-Client-Side:/app  # Mount frontend source code for live reload
+    #   - /app/node_modules       # Ignore node_modules in volume mount
+    command: npm start           # Run React dev server for hot reload
+    depends_on:
+      - backend
+    develop:
+      watch:
+        - action: sync
+          path: ./Our-Client-Side
+          target: /app
+          ignore:
+            - node_modules/
+  
+volumes:
+  pgdata:

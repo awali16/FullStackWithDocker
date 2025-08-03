@@ -1,0 +1,11 @@
+watch:
+  frontend:
+    paths:
+      - path: ./Our-Client-Side
+        target: /app
+        action: sync
+  backend:
+    paths:
+      - path: ./Our-Server-Side
+        target: /app
+        action: sync

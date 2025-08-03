@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 8116
+      POSTGRES_DB: db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    image: awali016/backend-app:first
+    depends_on:
+      - db
+    environment:
+      PORT: 8080
+      PG_HOST: db              # Use service name here, NOT localhost
+      PG_PORT: 5432
+      PG_USER: postgres
+      PG_PASSWORD: 8116
+      PG_DATABASE: db
+      DATABASE_URL: postgresql://postgres:8116@db:5432/db?schema=public
+    ports:
+      - "8080:8080"
+
+  frontend:
+    image: awali016/frontend-app:first
+    depends_on:
+      - backend
+    environment:
+      REACT_APP_SERVER_API_URL: http://localhost:8080   # For dev on host machine
+    ports:
+      - "3000:80"
+
+volumes:
+  pgdata:

@@ -1,0 +1,32 @@
+#Production Dockerfile for Our-Server-Side
+# Use slim version to reduce vulnerabilities
+FROM node:18-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies (required for Prisma)
+RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+
+# Copy only package.json and install dependencies
+COPY package*.json ./
+RUN npm install
+
+# Copy the rest of your code
+COPY . .
+
+# Generate Prisma client (after copying prisma folder)
+RUN npx prisma generate
+
+# Expose backend API port
+EXPOSE 5000
+
+
+# To start the app in production mode
+# Uncomment the line below to run the server in production mode
+CMD ["node", "server.js"] 
+
+
+#  To Start the app in development mode
+
+# CMD ["npm", "run", "dev"]   
