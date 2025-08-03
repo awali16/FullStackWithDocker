@@ -26,5 +26,5 @@ jobs:
 
       - name: Build and push backend image
         run: |
-          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/backend-app:latest ./Our-Server-Side
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/backend-app:latest
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/backend-app:GHWF ./Our-Server-Side
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/backend-app:GHWF
