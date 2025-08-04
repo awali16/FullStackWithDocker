@@ -22,15 +22,15 @@ jobs:
       - name: Deploy on EC2
         run: |
           ssh -o StrictHostKeyChecking=no -i ec2_key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-            docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-            docker pull awali016/backend-app:GHWF
-            docker pull awali016/frontend-app:GHWF
+            sudo docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+            sudo docker pull awali016/backend-app:GHWF
+            sudo docker pull awali016/frontend-app:GHWF
 
-            docker stop backend || true && docker rm backend || true
-            docker stop frontend || true && docker rm frontend || true
+            sudo docker stop backend || true && docker rm backend || true
+            sudo docker stop frontend || true && docker rm frontend || true
 
-            docker network inspect myapp-network >/dev/null 2>&1 || docker network create myapp-network
+            sudo docker network inspect myapp-network >/dev/null 2>&1 || docker network create myapp-network
 
-            docker run -d --name backend --network myapp-network -p 8080:8080 awali016/backend-app:GHWF
-            docker run -d --name frontend --network myapp-network -p 3000:80 awali016/frontend-app:GHWF
+            sudo docker run -d --name backend --network myapp-network -p 8080:8080 awali016/backend-app:GHWF
+            sudo docker run -d --name frontend --network myapp-network -p 3000:80 awali016/frontend-app:GHWF
           EOF
