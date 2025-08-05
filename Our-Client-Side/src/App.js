@@ -59,7 +59,7 @@ function App() {
 
   return (
     <div className="App">
-      <header className="relative bg-gradient-to-t from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% text-white flex flex-col items-center justify-start min-h-screen py-10">
+      <header className="relative bg-gradient-to-t from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% text-white flex flex-col items-center justify-start min-h-screen py-10 ">
         <img
           src={logo}
           className="App-logo animate-spin"
