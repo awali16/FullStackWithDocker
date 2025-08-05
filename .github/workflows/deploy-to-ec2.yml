@@ -31,6 +31,9 @@ jobs:
             docker stop backend || true && docker rm backend || true
             docker stop postgres || true && docker rm postgres || true
 
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/backend-app:GHWF
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/frontend-app:GHWF
+
             # Create Docker network
             docker network inspect myapp-network >/dev/null 2>&1 || docker network create myapp-network
 
