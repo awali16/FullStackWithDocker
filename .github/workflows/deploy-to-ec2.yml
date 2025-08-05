@@ -1,8 +1,8 @@
 name: Deploy to EC2
 
 on:
-   workflow_run:
-    workflows: ["Build and Push Docker Images"]  # The exact name of the build workflow
+  workflow_run:
+    workflows: ["Build and Push Docker Images"]
     types:
       - completed
 
@@ -11,26 +11,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Connect to EC2 and Deploy Containers
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            # Log in to Docker
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up SSH key
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" > ec2_key.pem
+          chmod 600 ec2_key.pem
+
+      - name: Deploy to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ec2_key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+
+            # Log in to Docker Hub
             echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
 
-            # Pull latest images
-            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/backend-app:GHWF
-            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/frontend-app:GHWF
-
-            # Stop and remove existing containers if they exist
-            docker stop backend || true && docker rm backend || true
+            # Stop and remove old containers
             docker stop frontend || true && docker rm frontend || true
+            docker stop backend || true && docker rm backend || true
             docker stop postgres || true && docker rm postgres || true
 
-            # Create Docker network if it doesn't exist
+            # Create Docker network
             docker network inspect myapp-network >/dev/null 2>&1 || docker network create myapp-network
 
             # Start PostgreSQL container
@@ -42,7 +43,7 @@ jobs:
               -e POSTGRES_DB=${{ secrets.POSTGRES_DB }} \
               -v pgdata:/var/lib/postgresql/data \
               -p 5432:5432 \
-              postgres:17
+              postgres:15
 
             # Start backend container
             docker run -d \
@@ -65,3 +66,4 @@ jobs:
               -e REACT_APP_SERVER_API_URL=http://backend:8080 \
               ${{ secrets.DOCKER_HUB_USERNAME }}/frontend-app:GHWF
 
+          EOF
