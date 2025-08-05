@@ -59,7 +59,7 @@ function App() {
 
   return (
     <div className="App">
-      <header className="relative bg-[yellow] text-white App-header flex flex-col items-center justify-start min-h-screen py-10">
+      <header className="relative bg-gradient-to-t from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% text-white flex flex-col items-center justify-start min-h-screen py-10">
         <img
           src={logo}
           className="App-logo animate-spin"
@@ -92,9 +92,9 @@ function App() {
         {
           <button
             onClick={startChaos}
-            className=" absolute top-5 right-5 border border-red-500 hover:border-red-600 text-white px-3 py-3 rounded-full mb-4 flex items-center justify-center gap-2 cursor-pointer"
+            className=" absolute top-5 right-5 border-4 border-red-500 hover:border-red-600 text-white px-3 py-3 rounded-full mb-4 flex items-center justify-center gap-2 cursor-pointer"
           >
-            <GiDynamite className="text-red-600 hover:text-white"/>
+            <GiDynamite className="text-red-600 hover:text-white h-8 w-8"/>
           </button>
         }
 
