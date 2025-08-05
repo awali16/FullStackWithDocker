@@ -59,7 +59,7 @@ function App() {
 
   return (
     <div className="App">
-      <header className="relative bg-gradient-to-t from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% text-white flex flex-col items-center justify-start min-h-screen py-10 ">
+      <header className="relative bg-gradient-to-t from-blue-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% text-white flex flex-col items-center justify-start min-h-screen py-10 ">
         <img
           src={logo}
           className="App-logo animate-spin"
@@ -84,7 +84,7 @@ function App() {
         {data && data.length > 0 ? null : (
           <button
             onClick={fetchBackendData}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg mb-4 cursor-pointer"
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg mb-4 cursor-pointer border-2 border-[red]"
           >
             Fetch Data
           </button>
