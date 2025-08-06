@@ -3,14 +3,16 @@ import logo from "./logo.svg";
 import "./App.css";
 import API from "./utils/api";
 import { GiDynamite  } from "react-icons/gi";
+import Confetti from 'react-confetti';
+import { useWindowSize } from '@react-hook/window-size';
 
 
 function App() {
   const [data, setData] = useState([]);
   const [dataLoading, setDataLoading] = useState(false);
   const [serverHealthy, setServerHealthy] = useState(false);
-  const [serverHealthCheckLoading, setServerHealthCheckLoading] =
-    useState(true);
+  const [serverHealthCheckLoading, setServerHealthCheckLoading] = useState(true);
+  const [width, height] = useWindowSize();
 
   const fetchBackendData = async () => {
     setDataLoading(true);
@@ -128,6 +130,7 @@ function App() {
           </div>
         )}
       </header>
+      <Confetti width={width-10} height={height-10} />
     </div>
   );
 }
