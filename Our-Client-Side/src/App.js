@@ -130,7 +130,7 @@ function App() {
           </div>
         )}
       </header>
-      <Confetti width={width-10} height={height-10} />
+      <Confetti width={width-12} height={height-12} />
     </div>
   );
 }
