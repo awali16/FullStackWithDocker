@@ -11,6 +11,8 @@ WORKDIR /app
 
 # Install netcat for the 'nc' command used in start.sh
 RUN apk add --no-cache netcat-openbsd
+
+RUN npm install pm2 -g
 # Copy only package.json and install dependencies
 COPY package*.json ./
 RUN npm install

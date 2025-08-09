@@ -1,7 +1,7 @@
 // controllers/userController.js
 const { PrismaClient } = require("@prisma/client");
 const Response = require("../../services/Response");
-const { sampleData, getFormattedTime } = require("../../services/Constants");
+const { sampleData, getFormattedTime, Gogje } = require("../../services/Constants");
 const prisma = new PrismaClient(); // ✅ Instantiate once outside the handler
 
 module.exports = {
@@ -36,21 +36,13 @@ module.exports = {
     }
   },
   crashServer: async(req, res) => {
-    // console.error("❌ Server intentionally crashed");
-    // // Intentionally crash the server
-    // process.exit(1);
-    //to be added later when we use pm2 or similar process manager to autorestart our server
-
+    
     try {
-      
-      return Response.successResponseWithData(
-        res,
-        "Crashed Functionality to be added later",
-        "Oops Database Crashed",
-        200
-      );
+      // // Intentionally crash the server
+       process.exit(1);
+    
     } catch (error) {
-      console.error("❌ Error in getData:", err);
+      console.error("❌ Server intentionally crashed", err);
       return Response.errorResponseData(res, "Something went wrong", 500);
     }
   },

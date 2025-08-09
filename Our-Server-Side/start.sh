@@ -13,4 +13,4 @@ npx prisma migrate deploy
 
 # Start your app
 echo "▶️ Starting backend server..."
-node server.js
+pm2 start server.js --no-daemon
