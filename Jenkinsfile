@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     environment {
-        EC2_KEY = credentials('ec2-key')
         EC2_USER = 'ubuntu'
         EC2_HOST = "3.111.32.29"
     }
@@ -42,20 +41,25 @@ pipeline {
 
         stage('Deploy on EC2') {
             steps {
-                script {
-                    sh """
-                    ssh -o StrictHostKeyChecking=no -i $EC2_KEY $EC2_USER@$EC2_HOST << 'EOF'
-                        docker network create app-network || true
-                        docker pull $DOCKERHUB_CREDENTIALS_USR/frontend-app:jenkins
-                        docker pull $DOCKERHUB_CREDENTIALS_USR/backend-app:jenkins
+                sshagent(['ec2-key']) {
+                    script {
+                        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKERHUB_CREDENTIALS_USR', passwordVariable: 'DOCKERHUB_CREDENTIALS_PSW')]) {
+                            sh """
+                            ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << EOF
+                                docker network create app-network || true
+                                docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW
+                                docker pull $DOCKERHUB_CREDENTIALS_USR/frontend-app:jenkins
+                                docker pull $DOCKERHUB_CREDENTIALS_USR/backend-app:jenkins
 
-                        docker rm -f frontend || true
-                        docker rm -f backend || true
+                                docker rm -f frontend || true
+                                docker rm -f backend || true
 
-                        docker run -d --name backend --network app-network -p 5000:5000 $DOCKERHUB_CREDENTIALS_USR/backend-app:jenkins
-                        docker run -d --name frontend --network app-network -p 3000:80 $DOCKERHUB_CREDENTIALS_USR/frontend-app:jenkins
-                    EOF
-                    """
+                                docker run -d --name backend --network app-network -p 5000:5000 $DOCKERHUB_CREDENTIALS_USR/backend-app:jenkins
+                                docker run -d --name frontend --network app-network -p 3000:80 $DOCKERHUB_CREDENTIALS_USR/frontend-app:jenkins
+                            EOF
+                            """
+                        }
+                    }
                 }
             }
         }
