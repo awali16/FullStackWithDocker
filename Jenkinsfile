@@ -2,7 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds') // Jenkins credentials ID for Docker Hub
+        DOCKERHUB_CREDENTIALS_USR = credentials('dockerhub-creds').username
+        DOCKERHUB_CREDENTIALS_PSW = credentials('dockerhub-creds').password// Jenkins credentials ID for Docker Hub
         EC2_KEY = credentials('ec2-key')
         EC2_USER = 'ubuntu'
         EC2_HOST = "3.111.32.29"
