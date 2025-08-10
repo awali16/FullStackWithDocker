@@ -2,13 +2,9 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS_USR = credentials('dockerhub-creds').username
-        DOCKERHUB_CREDENTIALS_PSW = credentials('dockerhub-creds').password// Jenkins credentials ID for Docker Hub
         EC2_KEY = credentials('ec2-key')
         EC2_USER = 'ubuntu'
         EC2_HOST = "3.111.32.29"
-        FRONTEND_IMAGE = "${DOCKERHUB_CREDENTIALS_USR}/frontend-app:jenkins"
-        BACKEND_IMAGE = "${DOCKERHUB_CREDENTIALS_USR}/backend-app:jenkins"
     }
 
     stages {
@@ -16,11 +12,13 @@ pipeline {
             steps {
                 dir('Our-Client-Side') {
                     script {
-                        sh """
-                        docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW
-                        docker build -t $FRONTEND_IMAGE .
-                        docker push $FRONTEND_IMAGE
-                        """
+                        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKERHUB_CREDENTIALS_USR', passwordVariable: 'DOCKERHUB_CREDENTIALS_PSW')]) {
+                            sh """
+                            docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW
+                            docker build -t $DOCKERHUB_CREDENTIALS_USR/frontend-app:jenkins .
+                            docker push $DOCKERHUB_CREDENTIALS_USR/frontend-app:jenkins
+                            """
+                        }
                     }
                 }
             }
@@ -30,11 +28,13 @@ pipeline {
             steps {
                 dir('Our-Server-Side') {
                     script {
-                        sh """
-                        docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW
-                        docker build -t $BACKEND_IMAGE .
-                        docker push $BACKEND_IMAGE
-                        """
+                        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKERHUB_CREDENTIALS_USR', passwordVariable: 'DOCKERHUB_CREDENTIALS_PSW')]) {
+                            sh """
+                            docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW
+                            docker build -t $DOCKERHUB_CREDENTIALS_USR/backend-app:jenkins .
+                            docker push $DOCKERHUB_CREDENTIALS_USR/backend-app:jenkins
+                            """
+                        }
                     }
                 }
             }
@@ -46,14 +46,14 @@ pipeline {
                     sh """
                     ssh -o StrictHostKeyChecking=no -i $EC2_KEY $EC2_USER@$EC2_HOST << 'EOF'
                         docker network create app-network || true
-                        docker pull $FRONTEND_IMAGE
-                        docker pull $BACKEND_IMAGE
+                        docker pull $DOCKERHUB_CREDENTIALS_USR/frontend-app:jenkins
+                        docker pull $DOCKERHUB_CREDENTIALS_USR/backend-app:jenkins
 
                         docker rm -f frontend || true
                         docker rm -f backend || true
 
-                        docker run -d --name backend --network app-network -p 5000:5000 $BACKEND_IMAGE
-                        docker run -d --name frontend --network app-network -p 3000:80 $FRONTEND_IMAGE
+                        docker run -d --name backend --network app-network -p 5000:5000 $DOCKERHUB_CREDENTIALS_USR/backend-app:jenkins
+                        docker run -d --name frontend --network app-network -p 3000:80 $DOCKERHUB_CREDENTIALS_USR/frontend-app:jenkins
                     EOF
                     """
                 }
