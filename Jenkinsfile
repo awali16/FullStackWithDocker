@@ -4,8 +4,8 @@ pipeline {
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds') // Jenkins credentials ID for Docker Hub
         EC2_KEY = credentials('ec2-key')
-        EC2_USER = credentials('EC2_USER')
-        EC2_HOST = credentials('EC2_HOST')
+        EC2_USER = 'ubuntu'
+        EC2_HOST = "3.111.32.29"
         FRONTEND_IMAGE = "${DOCKERHUB_CREDENTIALS_USR}/frontend-app:jenkins"
         BACKEND_IMAGE = "${DOCKERHUB_CREDENTIALS_USR}/backend-app:jenkins"
     }
