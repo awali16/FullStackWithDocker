@@ -3,17 +3,17 @@ pipeline {
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds') // Jenkins credentials ID for Docker Hub
-        EC2_KEY = credentials('ec2-key') // Jenkins credentials ID for your EC2 SSH private key
-        EC2_USER = 'ubuntu'
-        EC2_HOST = 'YOUR_EC2_PUBLIC_IP'
-        FRONTEND_IMAGE = '$DOCKERHUB_CREDENTIALS_USR/frontend-app:jenkins'
-        BACKEND_IMAGE = '$DOCKERHUB_CREDENTIALS_USR/backend-app:jenkins'
+        EC2_KEY = credentials('ec2-key')
+        EC2_USER = credentials('EC2_USER')
+        EC2_HOST = credentials('EC2_HOST')
+        FRONTEND_IMAGE = "${DOCKERHUB_CREDENTIALS_USR}/frontend-app:jenkins"
+        BACKEND_IMAGE = "${DOCKERHUB_CREDENTIALS_USR}/backend-app:jenkins"
     }
 
     stages {
         stage('Build & Push Frontend') {
             steps {
-                dir('frontend') {
+                dir('Our-Client-Side') {
                     script {
                         sh """
                         docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW
@@ -27,7 +27,7 @@ pipeline {
 
         stage('Build & Push Backend') {
             steps {
-                dir('server') {
+                dir('Our-Server-Side') {
                     script {
                         sh """
                         docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW
