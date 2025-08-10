@@ -6,9 +6,10 @@ pipeline {
         EC2_KEY = credentials('ec2-key') // Jenkins credentials ID for your EC2 SSH private key
         EC2_USER = 'ubuntu'
         EC2_HOST = '3.111.32.29'
-        FRONTEND_IMAGE = '$DOCKERHUB_CREDENTIALS_USR/frontend-app:jenkins'
-        BACKEND_IMAGE = '$DOCKERHUB_CREDENTIALS_USR/backend-app:jenkins'
+        FRONTEND_IMAGE = "${DOCKERHUB_CREDENTIALS_USR}/frontend-app:jenkins"
+        BACKEND_IMAGE = "${DOCKERHUB_CREDENTIALS_USR}/backend-app:jenkins"
     }
+
 
     stages {
         stage('Build & Push Frontend') {
