@@ -30,9 +30,9 @@ pipeline {
                 dir('Our-Server-Side') {
                     script {
                         sh """
-                        sudo docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW
-                        sudo docker build -t $BACKEND_IMAGE .
-                        sudo docker push $BACKEND_IMAGE
+                         docker login -u $DOCKERHUB_CREDENTIALS_USR -p $DOCKERHUB_CREDENTIALS_PSW
+                         docker build -t $BACKEND_IMAGE .
+                         docker push $BACKEND_IMAGE
                         """
                     }
                 }
@@ -44,15 +44,15 @@ pipeline {
                 script {
                     sh """
                     ssh -o StrictHostKeyChecking=no -i $EC2_KEY $EC2_USER@$EC2_HOST << 'EOF'
-                        sudo docker network create app-network || true
-                        sudo docker pull $FRONTEND_IMAGE
-                        sudo docker pull $BACKEND_IMAGE
+                         docker network create app-network || true
+                         docker pull $FRONTEND_IMAGE
+                         docker pull $BACKEND_IMAGE
 
-                        sudo docker rm -f frontend || true
-                        sudo docker rm -f backend || true
+                         docker rm -f frontend || true
+                         docker rm -f backend || true
 
-                        sudo docker run -d --name backend --network app-network -p 5000:5000 $BACKEND_IMAGE
-                        sudo docker run -d --name frontend --network app-network -p 3000:80 $FRONTEND_IMAGE
+                         docker run -d --name backend --network app-network -p 5000:5000 $BACKEND_IMAGE
+                         docker run -d --name frontend --network app-network -p 3000:80 $FRONTEND_IMAGE
                     EOF
                     """
                 }
