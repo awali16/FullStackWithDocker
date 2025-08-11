@@ -60,7 +60,7 @@ pipeline {
 
                             docker run -d --name backend --network app-network -p 5000:5000 $DOCKERHUB_CREDENTIALS_USR/backend-app:jenkins
                             docker run -d --name frontend --network app-network -p 3000:80 $DOCKERHUB_CREDENTIALS_USR/frontend-app:jenkins
-                        EOF
+                            EOF
                         """
                     }
                 }
